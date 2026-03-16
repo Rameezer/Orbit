@@ -1,1528 +1,1332 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Carat - Gemstone NFT Marketplace</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 100%);
-            color: #ffffff;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1.5rem 2rem;
-            border-bottom: 2px solid #7c3aed;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(90deg, #a78bfa, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .wallet-btn {
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .wallet-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .nav {
-            background: rgba(0, 0, 0, 0.2);
-            padding: 1rem 2rem;
-            display: flex;
-            gap: 2rem;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            color: #a78bfa;
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            transition: all 0.3s;
-        }
-
-        .nav-btn:hover, .nav-btn.active {
-            background: rgba(167, 139, 250, 0.2);
-            color: white;
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-
-        .nft-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            transition: transform 0.3s, box-shadow 0.3s;
-            cursor: pointer;
-        }
-
-        .nft-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.3);
-        }
-
-        .nft-image {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .nft-content {
-            padding: 1.5rem;
-        }
-
-        .nft-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .nft-description {
-            color: #a78bfa;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-
-        .nft-details {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(167, 139, 250, 0.2);
-        }
-
-        .detail-item {
-            text-align: center;
-        }
-
-        .detail-label {
-            font-size: 0.8rem;
-            color: #a78bfa;
-            margin-bottom: 0.3rem;
-        }
-
-        .detail-value {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .eth-symbol {
-            color: #627eea;
-        }
-
-        .bid-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            border: none;
-            padding: 0.75rem;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .bid-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .create-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 600px;
-            margin: 2rem auto;
-            border: 1px solid rgba(167, 139, 250, 0.3);
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #a78bfa;
-            font-weight: 500;
-        }
-
-        .form-input, .form-textarea {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 8px;
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            background: rgba(0, 0, 0, 0.3);
-            color: white;
-            font-size: 1rem;
-        }
-
-        .form-textarea {
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .file-input-wrapper {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-btn {
-            background: rgba(167, 139, 250, 0.2);
-            border: 2px dashed rgba(167, 139, 250, 0.5);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .file-input-btn:hover {
-            background: rgba(167, 139, 250, 0.3);
-        }
-
-        .file-input-wrapper input[type=file] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            border: none;
-            padding: 1rem;
-            border-radius: 8px;
-            color: white;
-            font-weight: 600;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .submit-btn:hover {
-            transform: scale(1.02);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: linear-gradient(135deg, #1e1e2e 0%, #2d1b4e 100%);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            border: 2px solid #7c3aed;
-        }
-
-        .modal-header {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .close-btn {
-            float: right;
-            background: none;
-            border: none;
-            color: #a78bfa;
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .timer {
-            background: rgba(236, 72, 153, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            display: inline-block;
-            margin-bottom: 1rem;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 3rem 0;
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #a78bfa, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: #a78bfa;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            border-radius: 12px;
-            padding: 1.5rem;
-            transition: transform 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(167, 139, 250, 0.6);
-        }
-
-        .stat-label {
-            color: #a78bfa;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-change {
-            font-size: 0.9rem;
-            color: #9ca3af;
-        }
-
-        .stat-change.positive {
-            color: #10b981;
-        }
-
-        .activity-container {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .activity-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid rgba(167, 139, 250, 0.1);
-            transition: background 0.2s;
-        }
-
-        .activity-item:last-child {
-            border-bottom: none;
-        }
-
-        .activity-item:hover {
-            background: rgba(167, 139, 250, 0.1);
-        }
-
-        .activity-icon {
-            font-size: 1.5rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(167, 139, 250, 0.2);
-            border-radius: 8px;
-        }
-
-        .activity-details {
-            flex: 1;
-        }
-
-        .activity-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .activity-meta {
-            color: #a78bfa;
-            font-size: 0.9rem;
-        }
-
-        .activity-status {
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        .activity-status.winning {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
-        }
-
-        .activity-status.outbid {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        .activity-time {
-            color: #9ca3af;
-            font-size: 0.85rem;
-            white-space: nowrap;
-        }
-
-        .performance-grid {
-            display: grid;
-            gap: 1.5rem;
-        }
-
-        .performance-card {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            border-radius: 12px;
-            display: flex;
-            overflow: hidden;
-            transition: transform 0.3s;
-        }
-
-        .performance-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(167, 139, 250, 0.6);
-        }
-
-        .performance-image {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .performance-content {
-            flex: 1;
-            padding: 1.25rem;
-        }
-
-        .performance-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-        }
-
-        .performance-details {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .performance-views {
-            color: #a78bfa;
-            font-size: 0.85rem;
-            padding-top: 0.75rem;
-            border-top: 1px solid rgba(167, 139, 250, 0.2);
-        }
-
-        .action-btn {
-            background: rgba(167, 139, 250, 0.2);
-            border: 1px solid rgba(167, 139, 250, 0.4);
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            color: white;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-        }
-
-        .action-btn:hover {
-            background: rgba(167, 139, 250, 0.3);
-            border-color: rgba(167, 139, 250, 0.6);
-        }
-
-        .action-btn.danger {
-            background: rgba(239, 68, 68, 0.2);
-            border-color: rgba(239, 68, 68, 0.4);
-        }
-
-        .action-btn.danger:hover {
-            background: rgba(239, 68, 68, 0.3);
-            border-color: rgba(239, 68, 68, 0.6);
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ORBIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,700;1,9..144,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --void:    #050508;
+  --deep:    #080B12;
+  --surface: #0D1120;
+  --panel:   #111827;
+  --card:    #161F30;
+  --border:  #1E2D45;
+  --border2: #253550;
+  --text:    #E8F0FF;
+  --muted:   #5A7090;
+  --dim:     #2A3D58;
+  --orbit:   #4A9EFF;   /* core blue — the intelligence colour */
+  --pulse:   #2D6BFF;
+  --warm:    #FFB347;   /* warm accent — insight moments */
+  --green:   #3DD68C;
+  --coral:   #FF6B6B;
+  --violet:  #9B7EE0;
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; }
+
+body {
+  background: var(--void);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* ── STAR FIELD ─────────────────────────────────────────────────── */
+#starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(74,158,255,0.6);
+  animation: twinkle var(--dur) ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%,100% { opacity: var(--min-op); transform: scale(1); }
+  50%      { opacity: var(--max-op); transform: scale(1.4); }
+}
+
+/* ── AMBIENT GLOW ───────────────────────────────────────────────── */
+.ambient {
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  filter: blur(80px);
+}
+.ambient-1 {
+  width: 600px; height: 600px;
+  top: -200px; left: -100px;
+  background: radial-gradient(circle, rgba(45,107,255,0.06) 0%, transparent 70%);
+  animation: drift1 20s ease-in-out infinite;
+}
+.ambient-2 {
+  width: 500px; height: 500px;
+  bottom: -150px; right: -50px;
+  background: radial-gradient(circle, rgba(155,126,224,0.05) 0%, transparent 70%);
+  animation: drift2 25s ease-in-out infinite;
+}
+@keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(60px,40px)} }
+@keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-40px,-60px)} }
+
+/* ── TOPBAR ─────────────────────────────────────────────────────── */
+.top {
+  height: 50px;
+  background: rgba(8,11,18,0.85);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 0 24px; flex-shrink: 0;
+  position: relative; z-index: 50;
+}
+
+.brand {
+  display: flex; align-items: center; gap: 10px;
+}
+.brand-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px; font-weight: 500;
+  letter-spacing: 0.35em;
+  color: var(--orbit);
+  text-transform: uppercase;
+}
+.brand-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--muted);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  border-left: 1px solid var(--border);
+  padding-left: 10px;
+}
+
+.status-row {
+  display: flex; align-items: center; gap: 12px;
+}
+
+.status-pill {
+  display: flex; align-items: center; gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--muted);
+}
+.status-dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--muted);
+}
+.status-dot.thinking { background: var(--orbit); animation: orbitpulse 1s ease-in-out infinite; }
+.status-dot.live { background: var(--green); animation: orbitpulse 2s ease-in-out infinite; box-shadow: 0 0 8px var(--green); }
+@keyframes orbitpulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
+
+.pub-btn {
+  background: var(--orbit); color: #050508;
+  border: none; border-radius: 7px;
+  padding: 7px 16px; font-size: 11px;
+  font-weight: 700; cursor: pointer;
+  transition: all 0.2s; opacity: 0.2;
+  pointer-events: none; font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.04em;
+}
+.pub-btn.on { opacity: 1; pointer-events: all; }
+.pub-btn.on:hover { background: #6AB4FF; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(74,158,255,0.4); }
+
+/* ── SHELL ──────────────────────────────────────────────────────── */
+.shell {
+  flex: 1; display: flex; overflow: hidden;
+  position: relative; z-index: 10;
+}
+
+/* ── LEFT — ORBIT CORE ──────────────────────────────────────────── */
+.orbit-sidebar {
+  width: 260px; flex-shrink: 0;
+  background: rgba(8,11,18,0.6);
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+
+/* The orb — the visual heart of ORBIT */
+.orb-section {
+  padding: 24px 20px 18px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.orb-wrap {
+  position: relative;
+  width: 88px; height: 88px;
+}
+
+.orb {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(74,158,255,0.25) 0%,
+    rgba(45,107,255,0.12) 40%,
+    rgba(74,158,255,0.04) 70%,
+    transparent 100%);
+  border: 1px solid rgba(74,158,255,0.2);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+  animation: orbFloat 4s ease-in-out infinite;
+}
+@keyframes orbFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+
+.orb-inner {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(74,158,255,0.5) 0%,
+    rgba(45,107,255,0.3) 50%,
+    transparent 100%);
+  border: 1px solid rgba(74,158,255,0.3);
+  animation: orbPulse 2.5s ease-in-out infinite;
+}
+@keyframes orbPulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(74,158,255,0); }
+  50%    { box-shadow: 0 0 20px 4px rgba(74,158,255,0.15); }
+}
+
+/* orbit rings */
+.orb-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(74,158,255,0.08);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation: ringRotate var(--spd) linear infinite;
+}
+@keyframes ringRotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+.orb-ring::after {
+  content: '';
+  position: absolute;
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--orbit);
+  opacity: 0.6;
+  top: -2px; left: 50%;
+  transform: translateX(-50%);
+}
+
+.orb-state {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--orbit);
+  letter-spacing: 0.2em; text-transform: uppercase;
+  text-align: center;
+}
+
+/* Intelligence panels in sidebar */
+.sb-body {
+  flex: 1; overflow-y: auto; padding: 14px;
+  display: flex; flex-direction: column; gap: 10px;
+}
+
+.sb-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 6px;
+}
+
+/* Signal cards — key facts, sources */
+.signal-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 12px;
+  font-size: 12px; line-height: 1.6;
+  color: var(--muted);
+  transition: border-color 0.2s;
+}
+.signal-card:hover { border-color: var(--border2); }
+.signal-card.lit { border-color: rgba(74,158,255,0.3); color: var(--text); background: rgba(74,158,255,0.04); }
+
+.sc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8px; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--orbit);
+  margin-bottom: 5px; opacity: 0.7;
+}
+
+/* source chips */
+.src-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.src-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; padding: 2px 7px;
+  border-radius: 3px;
+  background: rgba(61,214,140,0.07);
+  border: 1px solid rgba(61,214,140,0.15);
+  color: var(--green);
+}
+
+/* redirect */
+.redirect-wrap {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; overflow: hidden;
+  transition: border-color 0.2s;
+}
+.redirect-wrap:focus-within { border-color: rgba(74,158,255,0.4); }
+.redirect-wrap textarea {
+  width: 100%; background: transparent; border: none;
+  padding: 10px 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; color: var(--text);
+  resize: none; height: 62px;
+  outline: none; line-height: 1.55;
+}
+.redirect-wrap textarea::placeholder { color: var(--muted); }
+.redirect-footer {
+  display: flex; justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px; border-top: 1px solid var(--border);
+  background: rgba(8,11,18,0.5);
+}
+.redirect-hint { font-size: 10px; color: var(--muted); }
+.redirect-btn {
+  background: none; border: 1px solid var(--border2);
+  border-radius: 5px; padding: 4px 10px;
+  font-size: 10px; font-weight: 600;
+  color: var(--muted); cursor: pointer;
+  transition: all 0.18s; font-family: 'DM Sans', sans-serif;
+}
+.redirect-btn:hover { color: var(--orbit); border-color: var(--orbit); }
+
+/* publish targets */
+.pub-list { display: flex; flex-direction: column; gap: 4px; }
+.pt {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 9px; border-radius: 6px;
+  cursor: pointer; border: 1px solid var(--border);
+  font-size: 11px; color: var(--muted);
+  transition: all 0.18s; background: var(--card);
+}
+.pt:hover { border-color: var(--border2); color: var(--text); }
+.pt.on { border-color: rgba(74,158,255,0.3); color: var(--text); background: rgba(74,158,255,0.04); }
+.pt .ck { margin-left: auto; color: var(--orbit); font-size: 10px; opacity: 0; transition: opacity 0.18s; }
+.pt.on .ck { opacity: 1; }
+
+/* ── MAIN — THE CONVERSATION ────────────────────────────────────── */
+.main {
+  flex: 1; display: flex; flex-direction: column;
+  overflow: hidden; min-width: 0;
+  background: rgba(5,5,8,0.4);
+}
+
+/* Episode header bar */
+.ep-bar {
+  height: 42px;
+  background: rgba(8,11,18,0.7);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 22px; gap: 14px; flex-shrink: 0;
+}
+.ep-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--orbit);
+  letter-spacing: 0.2em; text-transform: uppercase;
+}
+.ep-title-bar {
+  font-family: 'Fraunces', serif;
+  font-size: 13px; font-weight: 500;
+  color: var(--text); flex: 1;
+  white-space: nowrap; overflow: hidden;
+  text-overflow: ellipsis; font-style: italic;
+}
+.ep-actions {
+  display: flex; gap: 6px;
+}
+.ep-act {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 20px; padding: 4px 10px;
+  font-size: 10px; color: var(--muted);
+  cursor: pointer; transition: all 0.18s;
+}
+.ep-act:hover { color: var(--text); border-color: var(--border2); }
+.ep-act.blue:hover { color: var(--orbit); border-color: rgba(74,158,255,0.3); }
+.ep-act.warm:hover { color: var(--warm); border-color: rgba(255,179,71,0.3); }
+.ep-act.green:hover { color: var(--green); border-color: rgba(61,214,140,0.3); }
+
+/* BOOT SCREEN */
+.boot-screen {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 28px; padding: 40px; text-align: center;
+}
+
+.boot-orb-wrap {
+  position: relative; width: 120px; height: 120px;
+}
+
+.boot-orb {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(74,158,255,0.3) 0%,
+    rgba(45,107,255,0.15) 45%,
+    transparent 100%);
+  border: 1px solid rgba(74,158,255,0.25);
+  display: flex; align-items: center; justify-content: center;
+  animation: bootFloat 3s ease-in-out infinite;
+}
+@keyframes bootFloat { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-6px) scale(1.02)} }
+
+.boot-orb-inner {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 35%,
+    rgba(74,158,255,0.6) 0%, rgba(45,107,255,0.35) 50%, transparent 100%);
+  border: 1px solid rgba(74,158,255,0.4);
+  animation: bootPulse 2s ease-in-out infinite;
+}
+@keyframes bootPulse {
+  0%,100%{ box-shadow: 0 0 0 0 rgba(74,158,255,0.2); }
+  50%    { box-shadow: 0 0 30px 8px rgba(74,158,255,0.15); }
+}
+
+.boot-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(74,158,255,0.1);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+}
+.boot-ring::after {
+  content: '';
+  position: absolute; width: 5px; height: 5px;
+  border-radius: 50%; background: var(--orbit);
+  opacity: 0.5; top: -2.5px; left: 50%;
+  transform: translateX(-50%);
+}
+
+.boot-title {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--orbit);
+  letter-spacing: 0.3em; text-transform: uppercase;
+}
+
+.boot-steps {
+  display: flex; flex-direction: column;
+  align-items: center; gap: 7px;
+}
+.boot-step {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--muted);
+  letter-spacing: 0.12em; opacity: 0;
+  transition: all 0.5s; transform: translateY(4px);
+}
+.boot-step.on { opacity: 0.7; transform: none; }
+.boot-step.active { opacity: 1; color: var(--orbit); }
+
+/* MESSAGES */
+.msgs {
+  flex: 1; overflow-y: auto;
+  padding: 24px 28px 12px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+
+/* EPISODE DROP — how ORBIT presents its intelligence */
+.ep-drop { margin-bottom: 24px; animation: epIn 0.5s ease; }
+@keyframes epIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+.ep-drop-who {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 12px;
+}
+.who-orb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(74,158,255,0.4), transparent);
+  border: 1px solid rgba(74,158,255,0.3);
+  flex-shrink: 0;
+}
+.who-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; color: var(--orbit);
+  letter-spacing: 0.15em; text-transform: uppercase;
+}
+.who-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; padding: 2px 7px;
+  border-radius: 3px; letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(74,158,255,0.08);
+  border: 1px solid rgba(74,158,255,0.18);
+  color: var(--orbit);
+}
+
+/* The episode card itself */
+.ep-card {
+  background: rgba(13,17,32,0.9);
+  border: 1px solid var(--border);
+  border-radius: 4px 14px 14px 14px;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.ep-cover {
+  padding: 22px 26px 18px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(74,158,255,0.04) 0%, transparent 60%);
+}
+.ep-ep-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; color: var(--orbit);
+  letter-spacing: 0.25em; text-transform: uppercase;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.ep-ep-num::before {
+  content: '';
+  display: inline-block; width: 20px; height: 1px;
+  background: var(--orbit); opacity: 0.5;
+}
+.ep-ep-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px; font-weight: 700;
+  line-height: 1.25; color: var(--text);
+  margin-bottom: 12px;
+}
+.ep-ep-hook {
+  font-family: 'Fraunces', serif;
+  font-size: 15px; font-style: italic;
+  color: rgba(232,240,255,0.6);
+  line-height: 1.55; font-weight: 300;
+}
+
+/* Episode body — flowing narrative */
+.ep-narrative {
+  padding: 20px 26px;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.ep-para {
+  font-size: 15px; line-height: 1.85;
+  color: rgba(232,240,255,0.85);
+  animation: paraIn 0.4s ease both;
+}
+.ep-para:nth-child(1) { animation-delay: 0.1s; }
+.ep-para:nth-child(2) { animation-delay: 0.2s; }
+.ep-para:nth-child(3) { animation-delay: 0.3s; }
+.ep-para:nth-child(4) { animation-delay: 0.4s; }
+.ep-para:nth-child(5) { animation-delay: 0.5s; }
+@keyframes paraIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+.ep-para strong { color: var(--warm); font-weight: 600; }
+.ep-para em { color: rgba(155,126,224,0.9); }
+
+.ep-callout {
+  background: rgba(74,158,255,0.06);
+  border-left: 2px solid var(--orbit);
+  padding: 12px 16px; margin: 4px 0;
+  border-radius: 0 7px 7px 0;
+  font-size: 14px; font-style: italic;
+  color: rgba(232,240,255,0.7);
+}
+
+/* Episode footer */
+.ep-footer {
+  padding: 14px 26px 18px;
+  border-top: 1px solid var(--border);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.ep-foot-actions {
+  display: flex; gap: 7px; flex-wrap: wrap;
+}
+.efa {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 5px 12px;
+  font-size: 11px; color: var(--muted);
+  cursor: pointer; transition: all 0.18s;
+}
+.efa:hover { color: var(--text); }
+.efa.b:hover { color: var(--orbit); border-color: rgba(74,158,255,0.35); }
+.efa.w:hover { color: var(--warm); border-color: rgba(255,179,71,0.35); }
+.efa.g:hover { color: var(--green); border-color: rgba(61,214,140,0.35); }
+.efa.v:hover { color: var(--violet); border-color: rgba(155,126,224,0.35); }
+.efa.r:hover { color: var(--coral); border-color: rgba(255,107,107,0.35); }
+
+.ep-sources { display: flex; gap: 5px; flex-wrap: wrap; }
+.ep-src {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; padding: 2px 7px; border-radius: 3px;
+  background: rgba(61,214,140,0.07);
+  border: 1px solid rgba(61,214,140,0.15);
+  color: var(--green);
+}
+
+/* CONVERSATION MESSAGES */
+.mg { display: flex; flex-direction: column; margin-bottom: 20px; animation: epIn 0.28s ease; }
+.mg.you { align-items: flex-end; }
+.mg.orbit-msg { align-items: flex-start; }
+.mg-who { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+.mg.you .mg-who { color: rgba(232,240,255,0.4); justify-content: flex-end; }
+.mg.orbit-msg .mg-who { color: var(--orbit); }
+.bub { max-width: 82%; padding: 13px 17px; font-size: 14px; line-height: 1.78; border-radius: 4px; }
+.mg.you .bub { background: var(--card); border: 1px solid var(--border2); border-radius: 14px 14px 4px 14px; }
+.mg.orbit-msg .bub { background: rgba(13,17,32,0.9); border: 1px solid var(--border); border-radius: 4px 14px 14px 14px; backdrop-filter: blur(10px); }
+.mg.orbit-msg .bub strong { color: var(--warm); font-weight: 600; }
+
+.beat-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  padding: 2px 7px; border-radius: 3px; margin-bottom: 8px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.bt-lens    { background: rgba(74,158,255,0.1); color: #5AA8E8; }
+.bt-deeper  { background: rgba(155,126,224,0.1); color: #A080D8; }
+.bt-clarity { background: rgba(61,214,140,0.1); color: #3DBF84; }
+.bt-insight { background: rgba(255,179,71,0.1); color: #D4943A; }
+.bt-shift   { background: rgba(255,107,107,0.1); color: #D85858; }
+
+/* inline actions */
+.inline-acts { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 10px; }
+.ia { display: flex; align-items: center; gap: 4px; background: var(--card); border: 1px solid var(--border2); border-radius: 20px; padding: 4px 10px; font-size: 11px; color: var(--muted); cursor: pointer; transition: all 0.18s; }
+.ia:hover { color: var(--text); }
+.ia.b:hover { color: var(--orbit); border-color: rgba(74,158,255,0.3); }
+.ia.w:hover { color: var(--warm); border-color: rgba(255,179,71,0.3); }
+.ia.g:hover { color: var(--green); border-color: rgba(61,214,140,0.3); }
+.ia.v:hover { color: var(--violet); border-color: rgba(155,126,224,0.3); }
+
+/* typing */
+.tg { display: flex; flex-direction: column; align-items: flex-start; margin-bottom: 16px; animation: epIn 0.28s ease; }
+.tg-who { font-size: 10px; font-weight: 600; color: var(--orbit); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+.tg-bub { background: rgba(13,17,32,0.9); border: 1px solid var(--border); border-radius: 4px 14px 14px 14px; padding: 12px 16px; display: flex; gap: 5px; align-items: center; }
+.td { width: 4px; height: 4px; border-radius: 50%; background: var(--orbit); opacity: 0.4; animation: tdot 1.2s infinite; }
+.td:nth-child(2){animation-delay:.18s;} .td:nth-child(3){animation-delay:.36s;}
+@keyframes tdot{0%,80%,100%{transform:translateY(0);opacity:.3}40%{transform:translateY(-4px);opacity:1}}
+.tg-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--orbit); margin-left: 8px; animation: blink 1.4s infinite; opacity: 0.7; }
+@keyframes blink{0%,100%{opacity:0.7}50%{opacity:0.2}}
+
+/* INPUT */
+.input-bar {
+  border-top: 1px solid var(--border); padding: 14px 22px;
+  background: rgba(8,11,18,0.7); backdrop-filter: blur(16px);
+  display: flex; gap: 10px; align-items: flex-end; flex-shrink: 0;
+}
+.iw { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 14px; display: flex; align-items: flex-end; overflow: hidden; transition: border-color 0.2s; }
+.iw:focus-within { border-color: rgba(74,158,255,0.4); }
+#ci { flex: 1; background: transparent; border: none; padding: 12px 14px; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); resize: none; outline: none; min-height: 46px; max-height: 120px; line-height: 1.5; }
+#ci::placeholder { color: var(--muted); }
+.sbtn { width: 38px; height: 38px; margin: 4px; border-radius: 10px; background: var(--orbit); color: var(--void); border: none; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.18s; flex-shrink: 0; }
+.sbtn:hover { background: #6AB4FF; }
+.sbtn:disabled { opacity: 0.2; cursor: not-allowed; }
+
+/* ── RIGHT — STORY OUTPUT ───────────────────────────────────────── */
+.story-panel {
+  width: 300px; flex-shrink: 0;
+  background: rgba(8,11,18,0.6);
+  backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.sp-head { padding: 12px 15px 10px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.sp-title { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--text); }
+.sp-badge { font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 2px 6px; border-radius: 3px; background: var(--panel); color: var(--muted); letter-spacing: 0.1em; }
+.sp-tabs { display: flex; border-bottom: 1px solid var(--border); overflow-x: auto; background: rgba(8,11,18,0.5); }
+.spt { padding: 7px 11px; font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.18s; }
+.spt:hover { color: var(--text); } .spt.on { color: var(--orbit); border-bottom-color: var(--orbit); }
+.sp-body { flex: 1; overflow-y: auto; padding: 14px; }
+.sp-nil { height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: var(--muted); font-size: 12px; line-height: 1.65; }
+.sp-nil-orb { width: 40px; height: 40px; border-radius: 50%; background: radial-gradient(circle, rgba(74,158,255,0.1), transparent); border: 1px solid var(--border); margin-bottom: 4px; animation: bootFloat 3s ease-in-out infinite; }
+
+/* story output */
+.sc h1 { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; line-height: 1.35; margin-bottom: 11px; color: var(--text); }
+.sc .hook { font-family: 'Fraunces', serif; font-size: 13px; font-style: italic; font-weight: 300; color: rgba(74,158,255,0.9); margin-bottom: 11px; line-height: 1.5; }
+.sc p { font-size: 12px; line-height: 1.85; color: rgba(232,240,255,0.65); margin-bottom: 9px; }
+.sc .drop::first-letter { font-size: 3.2em; float: left; line-height: 0.78; margin-right: 5px; margin-top: 4px; font-family: 'Fraunces', serif; font-weight: 700; color: var(--orbit); }
+.sc blockquote { border-left: 2px solid var(--orbit); padding: 6px 11px; margin: 10px 0; font-style: italic; font-size: 12px; color: var(--muted); background: rgba(74,158,255,0.04); border-radius: 0 5px 5px 0; }
+.sc .gk { font-size: 12px; font-weight: 700; color: var(--warm); margin: 11px 0 7px; }
+.ch-con { background: var(--card); border: 1px solid var(--border); border-radius: 7px; padding: 12px; font-size: 12px; line-height: 1.78; color: var(--text); white-space: pre-wrap; word-break: break-word; }
+.cpb { width: 100%; margin-top: 9px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 7px; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--muted); cursor: pointer; transition: all 0.18s; text-transform: uppercase; font-family: 'DM Sans', sans-serif; }
+.cpb:hover { color: var(--text); border-color: var(--border2); } .cpb.done { color: var(--green); border-color: var(--green); }
+
+.shim { background: linear-gradient(90deg, var(--card) 25%, var(--panel) 50%, var(--card) 75%); background-size: 200% 100%; animation: shm 1.4s infinite; border-radius: 4px; height: 10px; margin-bottom: 6px; }
+@keyframes shm{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+::-webkit-scrollbar{width:3px;} ::-webkit-scrollbar-track{background:transparent;} ::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px;}
+@media(max-width:1000px){.orbit-sidebar{width:220px;}.story-panel{width:260px;}}
+@media(max-width:720px){.orbit-sidebar{display:none;}.story-panel{display:none;}}
+</style>
 </head>
 <body>
-    <div class="header">
-        <div class="logo">💎 Digital Carat</div>
-        <button class="wallet-btn" id="connectWallet">Connect Wallet</button>
+
+<!-- STARFIELD -->
+<div id="starfield"></div>
+<div class="ambient ambient-1"></div>
+<div class="ambient ambient-2"></div>
+
+<!-- TOPBAR -->
+<div class="top">
+  <div class="brand">
+    <span class="brand-name">ORBIT</span>
+    <span class="brand-tag">Intelligence Companion</span>
+  </div>
+  <div class="status-row">
+    <div class="status-pill">
+      <div class="status-dot thinking" id="statusDot"></div>
+      <span id="statusText">INITIALISING</span>
+    </div>
+    <button class="pub-btn" id="pubBtn" onclick="publishAll()">✦ Publish</button>
+  </div>
+</div>
+
+<!-- SHELL -->
+<div class="shell">
+
+  <!-- LEFT — ORBIT SIDEBAR -->
+  <div class="orbit-sidebar">
+
+    <!-- ORB -->
+    <div class="orb-section">
+      <div class="orb-wrap">
+        <div class="orb-ring" style="width:110px;height:110px;--spd:12s;"></div>
+        <div class="orb-ring" style="width:130px;height:130px;--spd:20s;animation-direction:reverse;"></div>
+        <div class="orb">
+          <div class="orb-inner"></div>
+        </div>
+      </div>
+      <div class="orb-state" id="orbState">SCANNING</div>
     </div>
 
-    <div class="nav">
-        <button class="nav-btn active" onclick="showPage('marketplace')">Marketplace</button>
-        <button class="nav-btn" onclick="showPage('myNFTs')">My NFTs</button>
-        <button class="nav-btn" onclick="showPage('dashboard')">Dashboard</button>
-        <button class="nav-btn" id="adminBtn" onclick="showAdminLogin()" style="margin-left: auto; background: rgba(239, 68, 68, 0.2);">🔐 Admin</button>
+    <div class="sb-body">
+
+      <!-- Episode info -->
+      <div>
+        <div class="sb-label">Today's Lens</div>
+        <div class="signal-card lit" id="lensCard">
+          <div class="sc-label">Episode</div>
+          <div id="lensTitle" style="font-size:12px;line-height:1.5;color:var(--text)">Searching live intelligence…</div>
+        </div>
+      </div>
+
+      <!-- Key signals -->
+      <div>
+        <div class="sb-label">Key Signals</div>
+        <div id="signalsList" style="display:flex;flex-direction:column;gap:5px;">
+          <div class="signal-card"><div style="height:8px;background:var(--border);border-radius:3px;width:80%"></div></div>
+          <div class="signal-card"><div style="height:8px;background:var(--border);border-radius:3px;width:65%"></div></div>
+          <div class="signal-card"><div style="height:8px;background:var(--border);border-radius:3px;width:90%"></div></div>
+        </div>
+      </div>
+
+      <!-- Sources -->
+      <div>
+        <div class="sb-label">Sources</div>
+        <div class="src-chips" id="sourcesList">
+          <div class="src-chip" style="opacity:0.4">scanning…</div>
+        </div>
+      </div>
+
+      <!-- Redirect -->
+      <div>
+        <div class="sb-label">New Direction</div>
+        <div class="redirect-wrap">
+          <textarea id="redirectIn" placeholder="Tell ORBIT to go somewhere different — 'explore climate', 'take me to AI regulation', 'what's happening in crypto'…"></textarea>
+          <div class="redirect-footer">
+            <span class="redirect-hint">Redirect intelligence</span>
+            <button class="redirect-btn" onclick="redirect()">↺ Redirect</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publish targets -->
+      <div>
+        <div class="sb-label">Publish to</div>
+        <div class="pub-list">
+          <div class="pt on" data-t="blog"      onclick="togPt(this)">✍️ Blog Post <span class="ck">✓</span></div>
+          <div class="pt on" data-t="post"      onclick="togPt(this)">📝 Long Post <span class="ck">✓</span></div>
+          <div class="pt on" data-t="email"     onclick="togPt(this)">📧 Email <span class="ck">✓</span></div>
+          <div class="pt on" data-t="twitter"   onclick="togPt(this)">𝕏 Thread <span class="ck">✓</span></div>
+          <div class="pt on" data-t="instagram" onclick="togPt(this)">📸 Instagram <span class="ck">✓</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="ep-bar">
+      <div class="ep-num" id="epNum">ORBIT — EP. 01</div>
+      <div class="ep-title-bar" id="epTitleBar" style="color:var(--muted);font-style:normal;font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:0.1em">LOADING INTELLIGENCE…</div>
+      <div class="ep-actions" id="epActions" style="display:none">
+        <div class="ep-act blue" onclick="quickAct('Go deeper on the most surprising part of this.')">🕳 Deeper</div>
+        <div class="ep-act warm" onclick="quickAct('What does this mean for the free individual — someone building their own life outside of traditional structures?')">🎯 My angle</div>
+        <div class="ep-act green" onclick="quickAct('Quiz me on the key ideas from this episode.')">🧩 Quiz me</div>
+      </div>
     </div>
 
-    <div class="container">
-        <!-- Marketplace Page -->
-        <div id="marketplace" class="page active">
-            <div class="hero">
-                <h1 class="hero-title">Discover Precious Gemstones</h1>
-                <p class="hero-subtitle">Own authenticated gemstones backed by blockchain technology</p>
-            </div>
-
-            <div class="grid" id="nftGrid">
-                <!-- NFT cards will be inserted here -->
-            </div>
+    <div class="msgs" id="msgs">
+      <!-- Boot screen — ORBIT wakes up -->
+      <div class="boot-screen" id="bootScreen">
+        <div class="boot-orb-wrap">
+          <div class="boot-ring" style="width:160px;height:160px;animation:ringRotate 14s linear infinite;"></div>
+          <div class="boot-ring" style="width:185px;height:185px;animation:ringRotate 22s linear infinite reverse;"></div>
+          <div class="boot-orb">
+            <div class="boot-orb-inner"></div>
+          </div>
         </div>
-
-        <!-- Admin Dashboard Page -->
-        <div id="admin" class="page">
-            <!-- Admin Login Section -->
-            <div id="adminLoginSection">
-                <div class="hero">
-                    <h1 class="hero-title">🔐 Admin Access</h1>
-                    <p class="hero-subtitle">Authorized personnel only</p>
-                </div>
-
-                <div class="create-form" style="max-width: 450px;">
-                    <h2 style="text-align: center; margin-bottom: 2rem;">Admin Login</h2>
-                    
-                    <div class="form-group">
-                        <label class="form-label">Admin Username</label>
-                        <input type="text" class="form-input" id="adminUsername" placeholder="Enter admin username">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">Admin Password</label>
-                        <input type="password" class="form-input" id="adminPassword" placeholder="Enter admin password">
-                    </div>
-
-                    <button class="submit-btn" onclick="adminLogin()">Login as Admin</button>
-                    
-                    <div style="text-align: center; margin-top: 1rem; color: #a78bfa; font-size: 0.9rem;">
-                        For demo: username: <strong>admin</strong> / password: <strong>admin123</strong>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Dashboard Content -->
-            <div id="adminDashboardContent" style="display: none;">
-                <div class="hero">
-                    <h1 class="hero-title">Admin Dashboard</h1>
-                    <p class="hero-subtitle">Manage NFTs and monitor marketplace</p>
-                </div>
-
-                <!-- Admin Stats -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Listed NFTs</div>
-                        <div class="stat-value">6</div>
-                        <div class="stat-change">3 pending mint</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Bids Placed</div>
-                        <div class="stat-value">47</div>
-                        <div class="stat-change positive">+12 today</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Minted NFTs</div>
-                        <div class="stat-value">3</div>
-                        <div class="stat-change">Cost saved: Ξ 0.45</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Revenue</div>
-                        <div class="stat-value"><span class="eth-symbol">Ξ</span> 18.7</div>
-                        <div class="stat-change positive">Platform fees</div>
-                    </div>
-                </div>
-
-                <!-- Create New NFT Listing -->
-                <div style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">Create New NFT Listing</h2>
-                    
-                    <form class="create-form" id="adminCreateForm" style="max-width: 100%;">
-                        <div style="background: rgba(124, 58, 237, 0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 3px solid #7c3aed;">
-                            <strong>💡 Smart Minting:</strong> NFT will only be minted on Ethereum when the first bid is placed. The minting gas fee will be automatically included in the bidder's transaction, so you incur zero costs!
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                            <div class="form-group">
-                                <label class="form-label">Gemstone Name *</label>
-                                <input type="text" class="form-input" id="adminGemName" placeholder="e.g., Blue Sapphire" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Floor Price (ETH) *</label>
-                                <input type="number" class="form-input" id="adminFloorPrice" step="0.001" placeholder="0.5" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Description *</label>
-                            <textarea class="form-textarea" id="adminDescription" placeholder="Describe the gemstone (origin, carat, cut, clarity, color grade, etc.)" required></textarea>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                            <div class="form-group">
-                                <label class="form-label">Gemstone Photo *</label>
-                                <div class="file-input-wrapper">
-                                    <label class="file-input-btn">
-                                        📸 Upload gemstone image
-                                        <input type="file" id="adminImage" accept="image/*" required>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Certification Document (Optional)</label>
-                                <div class="file-input-wrapper">
-                                    <label class="file-input-btn">
-                                        📄 Upload certification
-                                        <input type="file" id="adminCert" accept=".pdf,image/*">
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                            <div class="form-group">
-                                <label class="form-label">Carat Weight</label>
-                                <input type="number" class="form-input" id="adminCarat" step="0.01" placeholder="3.5">
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Origin</label>
-                                <input type="text" class="form-input" id="adminOrigin" placeholder="e.g., Ceylon, Colombia">
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="form-label">Certification Available for Purchase?</label>
-                            <select class="form-input" id="adminCertAvailable">
-                                <option value="yes">Yes - Additional Ξ 0.01</option>
-                                <option value="no">No - Already included</option>
-                            </select>
-                        </div>
-
-                        <button type="submit" class="submit-btn">Create NFT Listing</button>
-                    </form>
-                </div>
-
-                <!-- Manage Existing NFTs -->
-                <div style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">Manage NFT Listings</h2>
-                    
-                    <div class="activity-container">
-                        <div class="activity-item">
-                            <div class="activity-icon">💎</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Royal Blue Sapphire</div>
-                                <div class="activity-meta">Floor: Ξ 2.5 • Current Bid: Ξ 3.2 • 5 bids</div>
-                            </div>
-                            <div class="activity-status winning">Minted</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(1)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(1)">Delete</button>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">💎</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Emerald Cut Diamond</div>
-                                <div class="activity-meta">Floor: Ξ 5.0 • Current Bid: Ξ 5.8 • 8 bids</div>
-                            </div>
-                            <div class="activity-status winning">Minted</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(2)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(2)">Delete</button>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">💎</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Colombian Emerald</div>
-                                <div class="activity-meta">Floor: Ξ 3.0 • Current Bid: Ξ 3.5 • 3 bids</div>
-                            </div>
-                            <div class="activity-status winning">Minted</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(3)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(3)">Delete</button>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">⏳</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Pink Tourmaline</div>
-                                <div class="activity-meta">Floor: Ξ 1.2 • No bids yet</div>
-                            </div>
-                            <div class="activity-status" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;">Pending Mint</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(4)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(4)">Delete</button>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">⏳</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Ruby Heart</div>
-                                <div class="activity-meta">Floor: Ξ 4.5 • No bids yet</div>
-                            </div>
-                            <div class="activity-status" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;">Pending Mint</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(5)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(5)">Delete</button>
-                            </div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">⏳</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Tanzanite Gem</div>
-                                <div class="activity-meta">Floor: Ξ 1.8 • No bids yet</div>
-                            </div>
-                            <div class="activity-status" style="background: rgba(251, 191, 36, 0.2); color: #fbbf24;">Pending Mint</div>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <button class="action-btn" onclick="editNFT(6)">Edit</button>
-                                <button class="action-btn danger" onclick="deleteNFT(6)">Delete</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Admin Activity -->
-                <div>
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">Recent Activity</h2>
-                    <div class="activity-container">
-                        <div class="activity-item">
-                            <div class="activity-icon">⚡</div>
-                            <div class="activity-details">
-                                <div class="activity-title">NFT Minted: Colombian Emerald</div>
-                                <div class="activity-meta">Triggered by first bid from 0x742d...5a3c</div>
-                            </div>
-                            <div class="activity-time">1 hour ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">📤</div>
-                            <div class="activity-details">
-                                <div class="activity-title">New NFT Listed: Tanzanite Gem</div>
-                                <div class="activity-meta">Status: Pending first bid to mint</div>
-                            </div>
-                            <div class="activity-time">3 hours ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">⚡</div>
-                            <div class="activity-details">
-                                <div class="activity-title">NFT Minted: Royal Blue Sapphire</div>
-                                <div class="activity-meta">Triggered by first bid from 0x89ab...cd12</div>
-                            </div>
-                            <div class="activity-time">5 hours ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">✏️</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Updated: Emerald Cut Diamond</div>
-                                <div class="activity-meta">Changed description and floor price</div>
-                            </div>
-                            <div class="activity-time">1 day ago</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 2rem; text-align: center;">
-                    <button class="action-btn danger" onclick="adminLogout()" style="padding: 0.75rem 2rem;">Logout</button>
-                </div>
-            </div>
+        <div class="boot-title">ORBIT IS WAKING UP</div>
+        <div class="boot-steps" id="bootSteps">
+          <div class="boot-step on active" id="bs0">🌐 Scanning live web intelligence…</div>
+          <div class="boot-step" id="bs1">🔍 Identifying the strongest signal today…</div>
+          <div class="boot-step" id="bs2">📡 Pulling sources and data…</div>
+          <div class="boot-step" id="bs3">🧠 Forming a perspective…</div>
+          <div class="boot-step" id="bs4">✍️ Writing your episode…</div>
+          <div class="boot-step" id="bs5">⚡ Almost ready…</div>
         </div>
-
-        <!-- My NFTs Page -->
-        <div id="myNFTs" class="page">
-            <div class="hero">
-                <h1 class="hero-title">My Collection</h1>
-                <p class="hero-subtitle">Manage your gemstone NFTs</p>
-            </div>
-
-            <div class="grid" id="myNFTGrid">
-                <p style="text-align: center; color: #a78bfa; padding: 2rem;">Connect your wallet to view your NFTs</p>
-            </div>
-        </div>
-
-        <!-- Dashboard Page -->
-        <div id="dashboard" class="page">
-            <div class="hero">
-                <h1 class="hero-title">My Dashboard</h1>
-                <p class="hero-subtitle">Track your portfolio and manage your account</p>
-            </div>
-
-            <!-- Login Section (shown when not logged in) -->
-            <div id="loginSection" class="create-form" style="max-width: 450px;">
-                <h2 style="text-align: center; margin-bottom: 2rem;">Login to Your Account</h2>
-                
-                <div class="form-group">
-                    <label class="form-label">Email or Wallet Address</label>
-                    <input type="text" class="form-input" id="loginEmail" placeholder="your@email.com or 0x...">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Enter your password">
-                </div>
-
-                <button class="submit-btn" onclick="login()">Login</button>
-                
-                <div style="text-align: center; margin-top: 1.5rem;">
-                    <p style="color: #a78bfa;">Or connect with your wallet</p>
-                    <button class="wallet-btn" style="margin-top: 1rem;" onclick="login()">Connect MetaMask</button>
-                </div>
-            </div>
-
-            <!-- Dashboard Content (shown when logged in) -->
-            <div id="dashboardContent" style="display: none;">
-                <!-- Stats Overview -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
-                    <div class="stat-card">
-                        <div class="stat-label">Total NFTs Owned</div>
-                        <div class="stat-value">12</div>
-                        <div class="stat-change positive">+2 this month</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Portfolio Value</div>
-                        <div class="stat-value"><span class="eth-symbol">Ξ</span> 45.8</div>
-                        <div class="stat-change positive">+12.5% ($89,420)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Active Bids</div>
-                        <div class="stat-value">5</div>
-                        <div class="stat-change">3 winning</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Total Spent</div>
-                        <div class="stat-value"><span class="eth-symbol">Ξ</span> 38.2</div>
-                        <div class="stat-change positive">+19.9% gain</div>
-                    </div>
-                </div>
-
-                <!-- My Active Bids -->
-                <div style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">Active Bids</h2>
-                    <div class="activity-container">
-                        <div class="activity-item">
-                            <div class="activity-icon">🔨</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Royal Blue Sapphire</div>
-                                <div class="activity-meta">Your bid: <span class="eth-symbol">Ξ</span> 3.2 • Current highest bid</div>
-                            </div>
-                            <div class="activity-status winning">Winning</div>
-                            <div class="activity-time">Ends in 18h 45m</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">🔨</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Emerald Cut Diamond</div>
-                                <div class="activity-meta">Your bid: <span class="eth-symbol">Ξ</span> 5.5 • Outbid by <span class="eth-symbol">Ξ</span> 0.3</div>
-                            </div>
-                            <div class="activity-status outbid">Outbid</div>
-                            <div class="activity-time">Ends in 6h 23m</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">🔨</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Pink Tourmaline</div>
-                                <div class="activity-meta">Your bid: <span class="eth-symbol">Ξ</span> 1.2 • Current highest bid</div>
-                            </div>
-                            <div class="activity-status winning">Winning</div>
-                            <div class="activity-time">Ends in 14h 55m</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- My NFTs Performance -->
-                <div style="margin-bottom: 3rem;">
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">My NFT Performance</h2>
-                    <div class="performance-grid">
-                        <div class="performance-card">
-                            <img src="https://images.unsplash.com/photo-1611955167811-4711904bb9f8?w=400" class="performance-image">
-                            <div class="performance-content">
-                                <div class="performance-title">Colombian Emerald #7834</div>
-                                <div class="performance-details">
-                                    <div>
-                                        <div class="detail-label">Purchase Price</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 2.8</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Current Value</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 3.9</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Gain/Loss</div>
-                                        <div class="detail-value" style="color: #10b981;">+39.3%</div>
-                                    </div>
-                                </div>
-                                <div class="performance-views">👁️ 1,234 views • 💬 23 inquiries</div>
-                            </div>
-                        </div>
-
-                        <div class="performance-card">
-                            <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=400" class="performance-image">
-                            <div class="performance-content">
-                                <div class="performance-title">Ruby Heart #2156</div>
-                                <div class="performance-details">
-                                    <div>
-                                        <div class="detail-label">Purchase Price</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 4.2</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Current Value</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 5.5</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Gain/Loss</div>
-                                        <div class="detail-value" style="color: #10b981;">+31.0%</div>
-                                    </div>
-                                </div>
-                                <div class="performance-views">👁️ 892 views • 💬 15 inquiries</div>
-                            </div>
-                        </div>
-
-                        <div class="performance-card">
-                            <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400" class="performance-image">
-                            <div class="performance-content">
-                                <div class="performance-title">Tanzanite Gem #9423</div>
-                                <div class="performance-details">
-                                    <div>
-                                        <div class="detail-label">Purchase Price</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 1.9</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Current Value</div>
-                                        <div class="detail-value"><span class="eth-symbol">Ξ</span> 1.7</div>
-                                    </div>
-                                    <div>
-                                        <div class="detail-label">Gain/Loss</div>
-                                        <div class="detail-value" style="color: #ef4444;">-10.5%</div>
-                                    </div>
-                                </div>
-                                <div class="performance-views">👁️ 456 views • 💬 8 inquiries</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div>
-                    <h2 style="font-size: 1.8rem; margin-bottom: 1.5rem; color: #a78bfa;">Recent Activity</h2>
-                    <div class="activity-container">
-                        <div class="activity-item">
-                            <div class="activity-icon">✅</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Won auction: Pink Tourmaline</div>
-                                <div class="activity-meta">Winning bid: <span class="eth-symbol">Ξ</span> 1.2</div>
-                            </div>
-                            <div class="activity-time">2 hours ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">📤</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Listed NFT: Emerald Cut Diamond</div>
-                                <div class="activity-meta">Floor price: <span class="eth-symbol">Ξ</span> 5.0</div>
-                            </div>
-                            <div class="activity-time">1 day ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">🔨</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Placed bid: Royal Blue Sapphire</div>
-                                <div class="activity-meta">Bid amount: <span class="eth-symbol">Ξ</span> 3.2</div>
-                            </div>
-                            <div class="activity-time">2 days ago</div>
-                        </div>
-
-                        <div class="activity-item">
-                            <div class="activity-icon">⚡</div>
-                            <div class="activity-details">
-                                <div class="activity-title">Minted new NFT: Colombian Emerald</div>
-                                <div class="activity-meta">Token ID: #7834</div>
-                            </div>
-                            <div class="activity-time">5 days ago</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
 
-    <!-- Bidding Modal -->
-    <div id="bidModal" class="modal">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">&times;</button>
-            <div class="modal-header" id="modalTitle">Place Your Bid</div>
-            
-            <div id="modalDetails"></div>
-
-            <div class="form-group" style="margin-top: 1.5rem;">
-                <label class="form-label">Your Bid Amount (ETH)</label>
-                <input type="number" class="form-input" id="bidAmount" step="0.001" placeholder="0.0">
-            </div>
-
-            <div style="background: rgba(124, 58, 237, 0.15); padding: 1rem; border-radius: 8px; margin: 1rem 0; font-size: 0.9rem;">
-                <strong>⚠️ Gas Fee Notice:</strong> If this is the first bid on this NFT, the minting gas fee (~0.01-0.03 ETH) will be added to your transaction cost. Subsequent bids only pay standard gas fees.
-            </div>
-
-            <button class="submit-btn" onclick="placeBid()">Place Bid</button>
-        </div>
+    <div class="input-bar">
+      <div class="iw">
+        <textarea id="ci" rows="1"
+          placeholder="React, question, redirect… or just say what's on your mind"
+          onkeydown="onKey(event)" oninput="grow(this)"></textarea>
+      </div>
+      <button class="sbtn" id="sb" onclick="send()" disabled>↑</button>
     </div>
+  </div>
 
-    <script>
-        // Sample NFT data
-        const sampleNFTs = [
-            {
-                id: 1,
-                name: "Royal Blue Sapphire",
-                description: "3.5 carat Ceylon sapphire with exceptional clarity",
-                image: "https://images.unsplash.com/photo-1611955167811-4711904bb9f8?w=400",
-                floorPrice: 2.5,
-                currentBid: 3.2,
-                timeLeft: "18h 45m",
-                certified: true
-            },
-            {
-                id: 2,
-                name: "Emerald Cut Diamond",
-                description: "2.1 carat VS1 clarity, D color grade diamond",
-                image: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400",
-                floorPrice: 5.0,
-                currentBid: 5.8,
-                timeLeft: "6h 23m",
-                certified: true
-            },
-            {
-                id: 3,
-                name: "Colombian Emerald",
-                description: "4.2 carat vivid green emerald from Muzo mines",
-                image: "https://images.unsplash.com/photo-1583937443566-6a2c2c2e9e66?w=400",
-                floorPrice: 3.0,
-                currentBid: 3.5,
-                timeLeft: "22h 10m",
-                certified: false
-            },
-            {
-                id: 4,
-                name: "Pink Tourmaline",
-                description: "6.8 carat Brazilian pink tourmaline",
-                image: "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400",
-                floorPrice: 1.2,
-                currentBid: 1.2,
-                timeLeft: "14h 55m",
-                certified: true
-            },
-            {
-                id: 5,
-                name: "Ruby Heart",
-                description: "2.9 carat Burmese ruby, pigeon blood red",
-                image: "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=400",
-                floorPrice: 4.5,
-                currentBid: 5.1,
-                timeLeft: "3h 30m",
-                certified: true
-            },
-            {
-                id: 6,
-                name: "Tanzanite Gem",
-                description: "5.3 carat violet-blue tanzanite",
-                image: "https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400",
-                floorPrice: 1.8,
-                currentBid: 2.1,
-                timeLeft: "20h 15m",
-                certified: false
-            }
-        ];
+  <!-- RIGHT — STORY PANEL -->
+  <div class="story-panel">
+    <div class="sp-head">
+      <div class="sp-title">The Story</div>
+      <div class="sp-badge" id="spBadge">FORMING</div>
+    </div>
+    <div class="sp-tabs" id="spTabs" style="display:none">
+      <div class="spt on" data-t="blog"      onclick="swTab(this)">Blog</div>
+      <div class="spt"    data-t="post"      onclick="swTab(this)">Post</div>
+      <div class="spt"    data-t="email"     onclick="swTab(this)">Email</div>
+      <div class="spt"    data-t="twitter"   onclick="swTab(this)">𝕏</div>
+      <div class="spt"    data-t="instagram" onclick="swTab(this)">IG</div>
+    </div>
+    <div class="sp-body" id="spBody">
+      <div class="sp-nil">
+        <div class="sp-nil-orb"></div>
+        ORBIT is reading the world.<br>Your story forms as the conversation builds.
+      </div>
+    </div>
+  </div>
 
-        let currentNFT = null;
+</div>
 
-        // Initialize the marketplace
-        function initMarketplace() {
-            const grid = document.getElementById('nftGrid');
-            grid.innerHTML = '';
+<style>
+@keyframes ringRotate { to { transform: translate(-50%,-50%) rotate(360deg); } }
+</style>
 
-            sampleNFTs.forEach(nft => {
-                const card = createNFTCard(nft);
-                grid.appendChild(card);
-            });
-        }
+<script>
+// ── API ENDPOINT ──────────────────────────────────────────────────
+// In Claude.ai artifact environment, calls go directly to Anthropic
+// In standalone deployment, calls go through the /api/chat proxy
+const API_URL = window.location.hostname === 'localhost' || 
+                window.location.hostname.includes('vercel.app') ||
+                window.location.hostname.includes('orbit') ||
+                !window.location.hostname.includes('claude')
+  ? '/api/chat'
+  : 'https://api.anthropic.com/v1/messages';
 
-        // Create NFT card element
-        function createNFTCard(nft) {
-            const card = document.createElement('div');
-            card.className = 'nft-card';
-            card.innerHTML = `
-                <img src="${nft.image}" alt="${nft.name}" class="nft-image">
-                <div class="nft-content">
-                    <div class="nft-title">${nft.name} ${nft.certified ? '✓' : ''}</div>
-                    <div class="nft-description">${nft.description}</div>
-                    <div class="nft-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Floor Price</div>
-                            <div class="detail-value"><span class="eth-symbol">Ξ</span> ${nft.floorPrice}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Current Bid</div>
-                            <div class="detail-value"><span class="eth-symbol">Ξ</span> ${nft.currentBid}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Ends In</div>
-                            <div class="detail-value">${nft.timeLeft}</div>
-                        </div>
-                    </div>
-                    <button class="bid-btn" onclick="openBidModal(${nft.id})">Place Bid</button>
-                </div>
-            `;
-            return card;
-        }
+const API_HEADERS = API_URL.includes('anthropic.com')
+  ? { 'Content-Type': 'application/json' }
+  : { 'Content-Type': 'application/json' };
 
-        // Open bidding modal
-        function openBidModal(nftId) {
-            currentNFT = sampleNFTs.find(nft => nft.id === nftId);
-            const modal = document.getElementById('bidModal');
-            const modalDetails = document.getElementById('modalDetails');
-            
-            modalDetails.innerHTML = `
-                <div class="timer">⏰ Auction ends in ${currentNFT.timeLeft}</div>
-                <h3 style="margin: 1rem 0;">${currentNFT.name}</h3>
-                <p style="color: #a78bfa; margin-bottom: 1rem;">${currentNFT.description}</p>
-                <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 8px;">
-                    <div>
-                        <div style="color: #a78bfa; font-size: 0.9rem;">Floor Price</div>
-                        <div style="font-size: 1.2rem; font-weight: 600;"><span class="eth-symbol">Ξ</span> ${currentNFT.floorPrice}</div>
-                    </div>
-                    <div>
-                        <div style="color: #a78bfa; font-size: 0.9rem;">Current Bid</div>
-                        <div style="font-size: 1.2rem; font-weight: 600;"><span class="eth-symbol">Ξ</span> ${currentNFT.currentBid}</div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('bidAmount').value = '';
-            document.getElementById('bidAmount').min = currentNFT.currentBid + 0.1;
-            modal.classList.add('active');
-        }
+// ── STARFIELD INIT ─────────────────────────────────────────────────
+(function() {
+  const sf = document.getElementById('starfield');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 1.5 + 0.5;
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      --dur:${3+Math.random()*6}s;
+      --min-op:${0.1+Math.random()*0.2};
+      --max-op:${0.4+Math.random()*0.4};
+      animation-delay:${Math.random()*6}s;
+    `;
+    sf.appendChild(s);
+  }
+})();
 
-        // Close modal
-        function closeModal() {
-            document.getElementById('bidModal').classList.remove('active');
-        }
+// ── STATE ─────────────────────────────────────────────────────────
+let hist       = [];
+let mc         = 0;
+let busy       = false;
+let bigIdea    = '';
+let pub        = {};
+let pts        = new Set(['blog','post','email','twitter','instagram']);
+let epNum      = 1;
+let epMeta     = { title:'', summary:'', signals:[], sources:[] };
 
-        // Place bid - REAL BLOCKCHAIN TRANSACTION
-        async function placeBid() {
-            const bidAmount = parseFloat(document.getElementById('bidAmount').value);
-            
-            if (!bidAmount || bidAmount <= currentNFT.currentBid) {
-                alert(`Bid must be higher than current bid of ${currentNFT.currentBid} ETH`);
-                return;
-            }
+// ── VOICE — ORBIT's intelligence personality ──────────────────────
+function orbitSystem() {
+  return `You are ORBIT — an ambient intelligence companion. One unified voice: clear, sharp, warm, surprising. Make complicated things obvious. Make obvious things surprising.
 
-            if (bidAmount < currentNFT.floorPrice) {
-                alert(`Bid must be at least the floor price of ${currentNFT.floorPrice} ETH`);
-                return;
-            }
+Rules: decode every technical term instantly in plain English. Max 4 sentences per conversation turn. End with one question. Zero jargon without plain-English follow-up. Everyday analogies only. Never name-drop communicators or authors.
 
-            const receipt = await placeBidReal(currentNFT.id, bidAmount);
-            if (receipt) {
-                closeModal();
-                setTimeout(() => window.location.reload(), 2000);
-            }
-        }
+Speak to a free, curious individual building their own life. Make them feel energised and sharper after every exchange.`;
+}
 
-        // Show different pages
-        function showPage(pageName) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-            
-            document.getElementById(pageName).classList.add('active');
-            event.target.classList.add('active');
-        }
+function orbitEpisodeSystem() {
+  return orbitSystem() + `
 
-        // Handle form submission
-        document.getElementById('createForm')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('This feature is now admin-only. Please contact an administrator to list NFTs.');
-            this.reset();
-        });
+EPISODE MODE: Search the web and write a flowing narrative episode. No headers, no bullets. Start mid-story with a surprising fact or question. 3-4 paragraphs: what's happening → what nobody's saying → why it matters. One plain-English data point. Close with one new way of seeing.
 
-        // Admin login function
-        function showAdminLogin() {
-            showPage('admin');
-            document.querySelector('#adminBtn').classList.add('active');
-        }
+End with these metadata lines:
+TITLE:title
+SUMMARY:2-sentence summary
+SIGNAL1:key signal
+SIGNAL2:key signal
+SIGNAL3:key signal
+SOURCES:source1,source2,source3
+IDEA:one memorable sentence`;
+}
 
-        function adminLogin() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
+// ── BOOT — ORBIT starts itself ─────────────────────────────────────
+window.addEventListener('load', () => setTimeout(boot, 800));
 
-            // Simple authentication (in production, this would be server-side)
-            if (username === 'admin' && password === 'admin123') {
-                document.getElementById('adminLoginSection').style.display = 'none';
-                document.getElementById('adminDashboardContent').style.display = 'block';
-                alert('✅ Admin login successful!\n\nYou can now:\n• Create NFT listings\n• Manage existing NFTs\n• Monitor marketplace activity\n• View analytics');
-            } else {
-                alert('❌ Invalid credentials. Please try again.');
-            }
-        }
+async function boot(topic) {
+  setStatus('thinking', 'SCANNING');
+  setOrbState('SCANNING');
 
-        function adminLogout() {
-            document.getElementById('adminLoginSection').style.display = 'block';
-            document.getElementById('adminDashboardContent').style.display = 'none';
-            document.getElementById('adminUsername').value = '';
-            document.getElementById('adminPassword').value = '';
-            showPage('marketplace');
-        }
+  const steps = ['bs0','bs1','bs2','bs3','bs4','bs5'];
+  let si = 0;
+  const tick = setInterval(() => {
+    if (si < steps.length) {
+      if (si > 0) { document.getElementById(steps[si-1]).classList.remove('active'); }
+      const el = document.getElementById(steps[si]);
+      if (el) { el.classList.add('on','active'); }
+      si++;
+    }
+  }, 1000);
 
-        // Admin create NFT form - REAL BLOCKCHAIN CREATION WITH DETAILED LOGGING
-        document.getElementById('adminCreateForm')?.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            console.log('📝 Form submitted!');
-            console.log('Wallet connected:', isConnected);
-            console.log('User address:', userAddress);
-            
-            if (!isConnected) {
-                alert('❌ Wallet Not Connected!\n\nPlease click "Connect Wallet" in the top right corner first.');
-                return;
-            }
-            
-            const gemData = {
-                name: document.getElementById('adminGemName').value,
-                description: document.getElementById('adminDescription').value,
-                imageURI: 'ipfs://QmTemp123',
-                certificationURI: '',
-                caratWeight: parseFloat(document.getElementById('adminCarat')?.value) || 0,
-                origin: document.getElementById('adminOrigin').value,
-                hasCertification: document.getElementById('adminCertAvailable').value === 'yes',
-                floorPrice: parseFloat(document.getElementById('adminFloorPrice').value)
-            };
-            
-            console.log('📋 Form data collected:', gemData);
-            
-            // Validate required fields
-            if (!gemData.name || !gemData.description || !gemData.floorPrice) {
-                alert('❌ Missing Required Fields!\n\nPlease fill in:\n• Gemstone Name\n• Description\n• Floor Price');
-                return;
-            }
-            
-            if (gemData.floorPrice <= 0) {
-                alert('❌ Invalid Floor Price!\n\nFloor price must be greater than 0.');
-                return;
-            }
-            
-            console.log('✅ Validation passed, calling createNFTReal...');
+  const prompt = topic
+    ? `New direction: "${topic}". Search the web now and present a full ORBIT episode on this. Make it the most interesting, unexpected angle on this topic.`
+    : `Search the web right now for the single most interesting, surprising, or important story happening today — in finance, geopolitics, technology, culture, science, or the intersection of several. Choose the story that has the most unexpected angle. The one where most people are watching the surface and missing what's underneath. Present a full ORBIT episode on it.`;
 
-            const receipt = await createNFTReal(gemData);
-            if (receipt) {
-                console.log('✅ NFT created successfully!');
-                this.reset();
-            } else {
-                console.log('❌ NFT creation failed or was cancelled');
-            }
-        });
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 800,
+        tools: [{ type:'web_search_20250305', name:'web_search' }],
+        system: orbitEpisodeSystem(),
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
 
-        // Edit NFT function
-        function editNFT(nftId) {
-            const nft = sampleNFTs.find(n => n.id === nftId);
-            if (nft) {
-                alert(`Edit NFT: ${nft.name}\n\nThis would open an edit form with current values:\n• Name: ${nft.name}\n• Floor Price: Ξ ${nft.floorPrice}\n• Description: ${nft.description}\n\nIn production, this would allow you to modify NFT details.`);
-            }
-        }
+    // Handle rate limit — wait and auto retry
+    if (res.status === 429 || data.error?.type === 'rate_limit_error') {
+      clearInterval(tick);
+      let secs = 30;
+      const countDown = () => {
+        document.getElementById('bootScreen').innerHTML = `
+          <div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">
+            <div style="font-size:28px;margin-bottom:14px;opacity:0.4">◎</div>
+            Rate limit reached.<br>
+            <div style="font-size:22px;color:var(--orbit);margin:12px 0;font-family:'JetBrains Mono',monospace">${secs}s</div>
+            <div style="font-size:11px;opacity:0.5">ORBIT retrying automatically…</div>
+          </div>`;
+        if (secs > 0) { secs--; setTimeout(countDown, 1000); }
+        else boot(topic);
+      };
+      countDown();
+      return;
+    }
 
-        // Delete NFT function
-        function deleteNFT(nftId) {
-            const nft = sampleNFTs.find(n => n.id === nftId);
-            if (nft) {
-                if (confirm(`Are you sure you want to delete "${nft.name}"?\n\nThis action cannot be undone.`)) {
-                    alert(`NFT "${nft.name}" has been deleted from the marketplace.`);
-                }
-            }
-        }
+    if (!data.content) throw new Error(data.error?.message || 'No response from API');
+    let raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
 
-        // Connect wallet button - REAL BLOCKCHAIN CONNECTION
-        document.getElementById('connectWallet').addEventListener('click', async function() {
-            await connectWalletReal();
-        });
+    clearInterval(tick);
 
-        // Login function
-        function login() {
-            const email = document.getElementById('loginEmail')?.value;
-            const password = document.getElementById('loginPassword')?.value;
+    // parse metadata
+    const get = (key) => { const m = raw.match(new RegExp(`^${key}:(.+)`, 'm')); return m ? m[1].trim() : ''; };
+    epMeta.title   = get('TITLE')   || 'Today\'s Episode';
+    epMeta.summary = get('SUMMARY') || '';
+    epMeta.signals = ['SIGNAL1','SIGNAL2','SIGNAL3'].map(k=>get(k)).filter(Boolean);
+    epMeta.sources = (get('SOURCES')||'').split(',').map(s=>s.trim()).filter(Boolean);
+    const idea     = get('IDEA');
+    if (idea) { bigIdea = idea; document.getElementById('pubBtn').classList.add('on'); }
 
-            // Simple validation
-            if (email || true) { // Allow login with just wallet connection
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboardContent').style.display = 'block';
-                
-                // Update wallet button
-                document.getElementById('connectWallet').textContent = '0x742d...5a3c';
-                
-                alert('Successfully logged in!\n\nYou can now:\n✓ View your portfolio stats\n✓ Track active bids\n✓ Monitor NFT performance\n✓ See activity history');
-            } else {
-                alert('Please enter your credentials or connect your wallet');
-            }
-        }
+    let epText = raw.replace(/^(TITLE|SUMMARY|SIGNAL[123]|SOURCES|IDEA):.+$/gm,'').trim();
+    epText = epText.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
 
-        // Initialize on load
-        initMarketplace();
-    </script>
+    updateSidebar();
+    renderEpisode(epText);
 
-    <!-- Ethers.js v6 Library - Using unpkg CDN to avoid CORS issues -->
-    <script src="https://unpkg.com/ethers@6.9.0/dist/ethers.umd.min.js"></script>
+    hist.push({ role:'user', content: prompt });
+    hist.push({ role:'assistant', content: raw });
+    mc = 1;
 
-    <!-- Blockchain Integration Scripts -->
-    <script>
-        // WALLET CONNECTION MODULE
-        let provider = null;
-        let signer = null;
-        let userAddress = null;
-        let contract = null;
-        let isConnected = false;
+    setStatus('live', 'LIVE');
+    setOrbState('LIVE');
+    document.getElementById('sb').disabled = false;
 
-        const CONTRACT_ADDRESS = "0x385A96a935EeE32ea0D41f3492Af83BD59D9EA98";
-        const CONTRACT_ABI = [
-            "function createGemstoneListing(string memory name, string memory description, string memory imageURI, string memory certificationURI, uint256 caratWeight, string memory origin, bool hasCertification, uint256 floorPrice) external returns (uint256)",
-            "function placeBid(uint256 tokenId) external payable",
-            "function getAuction(uint256 tokenId) external view returns (tuple(uint256 tokenId, uint256 floorPrice, uint256 currentBid, address currentBidder, address seller, uint256 startTime, uint256 endTime, bool active, bool isFirstBid))",
-            "function getGemstone(uint256 tokenId) external view returns (tuple(string name, string description, string imageURI, string certificationURI, uint256 caratWeight, string origin, bool hasCertification, bool isMinted))",
-            "function isGemstoneUnminted(uint256 tokenId) external view returns (bool)",
-            "function owner() external view returns (address)"
-        ];
+  } catch(err) {
+    console.error('ORBIT boot error:', err);
+    clearInterval(tick);
+    document.getElementById('bootScreen').innerHTML = `
+      <div style="text-align:center;color:var(--muted);font-size:13px">
+        <div style="font-size:28px;margin-bottom:14px;opacity:0.4">◎</div>
+        ${err.message || 'Connection issue'}<br>
+        <button onclick="boot()" style="margin-top:12px;background:var(--card);border:1px solid var(--border2);border-radius:7px;padding:7px 16px;color:var(--orbit);cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;">Retry</button>
+      </div>`;
+  }
+}
 
-        async function connectWalletReal() {
-            console.log("🔌 Connecting wallet...");
-            
-            if (typeof window.ethereum === 'undefined') {
-                alert('MetaMask not installed!\n\nPlease install MetaMask to use this marketplace.');
-                window.open('https://metamask.io/download/', '_blank');
-                return false;
-            }
+function updateSidebar() {
+  document.getElementById('lensTitle').textContent = epMeta.title;
+  document.getElementById('epNum').textContent = `ORBIT — EP. ${String(epNum).padStart(2,'0')}`;
+  document.getElementById('epTitleBar').textContent = epMeta.title;
+  document.getElementById('epTitleBar').style.cssText = 'font-family:\'Fraunces\',serif;font-size:13px;color:var(--text);font-style:italic;';
+  document.getElementById('epActions').style.display = 'flex';
 
-            try {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
-                provider = new ethers.BrowserProvider(window.ethereum);
-                signer = await provider.getSigner();
-                userAddress = await signer.getAddress();
-                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+  if (epMeta.signals.length) {
+    document.getElementById('signalsList').innerHTML = epMeta.signals.map(s => `
+      <div class="signal-card lit">
+        <div class="sc-label">Signal</div>
+        <div style="font-size:11px;color:rgba(232,240,255,0.8);line-height:1.5">${esc(s)}</div>
+      </div>`).join('');
+  }
 
-                const network = await provider.getNetwork();
-                const chainId = Number(network.chainId);
-                
-                if (chainId !== 11155111) {
-                    const switchNetwork = confirm('Wrong Network!\n\nPlease switch to Sepolia Testnet.\n\nClick OK to switch automatically.');
-                    if (switchNetwork) {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: '0xaa36a7' }],
-                        });
-                        return await connectWalletReal();
-                    }
-                    return false;
-                }
+  if (epMeta.sources.length) {
+    document.getElementById('sourcesList').innerHTML = epMeta.sources.slice(0,5).map(s =>
+      `<div class="src-chip">${esc(s)}</div>`).join('');
+  }
+}
 
-                isConnected = true;
-                const shortAddress = userAddress.substring(0, 6) + '...' + userAddress.substring(38);
-                document.getElementById('connectWallet').textContent = shortAddress;
-                document.getElementById('connectWallet').style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                
-                console.log('✅ Wallet connected:', userAddress);
-                alert('✅ Wallet Connected!\n\nAddress: ' + shortAddress + '\n\nYou can now create NFTs and place bids!');
-                return true;
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to connect: ' + error.message);
-                return false;
-            }
-        }
+function renderEpisode(rawText) {
+  const bs = document.getElementById('bootScreen');
+  if (bs) bs.remove();
 
-        async function placeBidReal(tokenId, bidAmountETH) {
-            if (!isConnected) {
-                alert('Please connect your wallet first!');
-                return null;
-            }
+  // Parse into paragraphs, detect callouts
+  const paras = rawText.split('\n\n').map(p=>p.trim()).filter(p=>p.length > 15);
 
-            try {
-                const isUnminted = await contract.isGemstoneUnminted(tokenId);
-                const bidInWei = ethers.parseEther(bidAmountETH.toString());
+  const parasHTML = paras.map((p, i) => {
+    const isCallout = p.startsWith('"') || p.startsWith('—') || (p.length < 160 && p.includes('"'));
+    if (isCallout) return `<div class="ep-callout">${p}</div>`;
+    return `<div class="ep-para${i===0?' drop':''}">${p}</div>`;
+  }).join('');
 
-                let confirmMsg = `Place Bid: ${bidAmountETH} ETH\n\n`;
-                if (isUnminted) {
-                    confirmMsg += '⚡ FIRST BID - Will mint NFT!\n';
-                    confirmMsg += '24-hour auction starts now.\n\n';
-                }
-                confirmMsg += 'Proceed?';
+  const srcHTML = epMeta.sources.length
+    ? `<div class="ep-sources">${epMeta.sources.slice(0,5).map(s=>`<div class="ep-src">🌐 ${esc(s)}</div>`).join('')}</div>`
+    : '';
 
-                if (!confirm(confirmMsg)) return null;
+  const msgs = document.getElementById('msgs');
+  const drop = document.createElement('div');
+  drop.className = 'ep-drop';
+  drop.innerHTML = `
+    <div class="ep-drop-who">
+      <div class="who-orb"></div>
+      <div class="who-name">ORBIT</div>
+      <div class="who-tag">📡 Live Episode</div>
+    </div>
+    <div class="ep-card">
+      <div class="ep-cover">
+        <div class="ep-ep-num">Episode ${String(epNum).padStart(2,'0')}</div>
+        <div class="ep-ep-title">${esc(epMeta.title)}</div>
+        ${epMeta.summary ? `<div class="ep-ep-hook">${esc(epMeta.summary.split('.')[0])}.</div>` : ''}
+      </div>
+      <div class="ep-narrative">${parasHTML}</div>
+      <div class="ep-footer">
+        <div class="ep-foot-actions">
+          <div class="efa b" onclick="quickAct('Go deeper — what are the layers underneath this that most people never reach?')">🕳 Go deeper</div>
+          <div class="efa w" onclick="quickAct('Simplify this completely — one perfect analogy that makes it click.')">💡 Simplify</div>
+          <div class="efa g" onclick="quickAct('What does this mean for someone building their own life outside traditional structures?')">🎯 My angle</div>
+          <div class="efa v" onclick="quickAct('What\'s the counterintuitive thing here that almost nobody is saying?')">🔄 Flip it</div>
+          <div class="efa r" onclick="showRedirect()">↺ New topic</div>
+        </div>
+        ${srcHTML}
+      </div>
+    </div>`;
 
-                console.log('Sending bid transaction...');
-                const tx = await contract.placeBid(tokenId, { value: bidInWei });
-                alert(`Transaction submitted!\n\nHash: ${tx.hash.substring(0, 10)}...\n\nWaiting for confirmation...`);
-                
-                const receipt = await tx.wait();
-                console.log('✅ Transaction confirmed:', receipt);
-                alert('✅ Bid placed successfully!');
-                return receipt;
-            } catch (error) {
-                console.error('Error:', error);
-                let errorMsg = 'Transaction failed: ';
-                if (error.message.includes('user rejected')) {
-                    errorMsg = 'Transaction cancelled by user';
-                } else if (error.reason) {
-                    errorMsg += error.reason;
-                } else {
-                    errorMsg += error.message;
-                }
-                alert(errorMsg);
-                return null;
-            }
-        }
+  msgs.appendChild(drop);
+  msgs.scrollTop = msgs.scrollHeight;
+}
 
-        async function createNFTReal(gemData) {
-            console.log('🔄 Starting createNFTReal function...');
-            console.log('Gem data:', gemData);
-            
-            if (!isConnected) {
-                alert('❌ Wallet Not Connected!\n\nPlease click "Connect Wallet" first.');
-                return null;
-            }
-            
-            console.log('✅ Wallet connected, checking owner...');
+// ── REDIRECT ───────────────────────────────────────────────────────
+function showRedirect() { document.getElementById('redirectIn').focus(); }
 
-            try {
-                console.log('📞 Calling contract.owner()...');
-                const owner = await contract.owner();
-                console.log('Contract owner:', owner);
-                console.log('Your address:', userAddress);
-                
-                if (owner.toLowerCase() !== userAddress.toLowerCase()) {
-                    alert('❌ Permission Denied!\n\nOnly the contract owner can create listings.\n\nContract Owner: ' + owner + '\nYour Address: ' + userAddress);
-                    return null;
-                }
-                
-                console.log('✅ User is owner, preparing transaction...');
+async function redirect() {
+  const t = document.getElementById('redirectIn').value.trim();
+  if (!t) { showRedirect(); return; }
+  document.getElementById('redirectIn').value = '';
+  hist = []; mc = 0; bigIdea = ''; epNum++;
+  epMeta = { title:'', summary:'', signals:[], sources:[] };
+  pub = {};
 
-                const floorPriceWei = ethers.parseEther(gemData.floorPrice.toString());
-                const caratStored = Math.round(gemData.caratWeight * 10);
-                
-                console.log('Floor price in Wei:', floorPriceWei.toString());
-                console.log('Carat stored:', caratStored);
+  const msgs = document.getElementById('msgs');
+  msgs.innerHTML = `<div class="boot-screen" id="bootScreen">
+    <div class="boot-orb-wrap">
+      <div class="boot-ring" style="width:160px;height:160px;animation:ringRotate 14s linear infinite;"></div>
+      <div class="boot-ring" style="width:185px;height:185px;animation:ringRotate 22s linear infinite reverse;"></div>
+      <div class="boot-orb"><div class="boot-orb-inner"></div></div>
+    </div>
+    <div class="boot-title">REDIRECTING ORBIT</div>
+    <div class="boot-steps" id="bootSteps">
+      <div class="boot-step on active" id="bs0">🌐 Searching: ${esc(t)}…</div>
+      <div class="boot-step" id="bs1">🔍 Finding the unexpected angle…</div>
+      <div class="boot-step" id="bs2">📡 Gathering intelligence…</div>
+      <div class="boot-step" id="bs3">🧠 Forming perspective…</div>
+      <div class="boot-step" id="bs4">✍️ Writing your episode…</div>
+      <div class="boot-step" id="bs5">⚡ Almost ready…</div>
+    </div>
+  </div>`;
 
-                console.log('📤 Sending createGemstoneListing transaction...');
-                const tx = await contract.createGemstoneListing(
-                    gemData.name,
-                    gemData.description,
-                    gemData.imageURI || 'ipfs://QmTemp',
-                    gemData.certificationURI || '',
-                    caratStored,
-                    gemData.origin,
-                    gemData.hasCertification,
-                    floorPriceWei
-                );
+  document.getElementById('spBody').innerHTML = '<div class="sp-nil"><div class="sp-nil-orb"></div>Redirecting…</div>';
+  document.getElementById('spTabs').style.display = 'none';
+  document.getElementById('pubBtn').classList.remove('on');
+  document.getElementById('epTitleBar').textContent = 'REDIRECTING…';
+  document.getElementById('sb').disabled = true;
 
-                console.log('✅ Transaction sent! Hash:', tx.hash);
-                alert(`✅ Transaction Submitted!\n\nHash: ${tx.hash.substring(0, 20)}...\n\nWaiting for confirmation...\n\nThis may take 10-30 seconds.`);
-                
-                console.log('⏳ Waiting for transaction confirmation...');
-                const receipt = await tx.wait();
-                console.log('✅ Transaction confirmed!', receipt);
-                
-                alert('🎉 SUCCESS!\n\nNFT listing created on blockchain!\n\nTransaction confirmed in block #' + receipt.blockNumber);
-                return receipt;
-                
-            } catch (error) {
-                console.error('❌ Error in createNFTReal:', error);
-                
-                let errorMsg = '❌ Transaction Failed!\n\n';
-                
-                if (error.message.includes('user rejected')) {
-                    errorMsg += 'You cancelled the transaction.';
-                } else if (error.code === 'INSUFFICIENT_FUNDS') {
-                    errorMsg += 'Insufficient Funds!\n\n';
-                    errorMsg += 'You need more Sepolia ETH to pay for gas fees.\n\n';
-                    errorMsg += 'Get free Sepolia ETH from:\n';
-                    errorMsg += '• sepoliafaucet.com\n';
-                    errorMsg += '• faucet.quicknode.com';
-                } else if (error.reason) {
-                    errorMsg += 'Reason: ' + error.reason;
-                } else if (error.message) {
-                    errorMsg += 'Error: ' + error.message;
-                } else {
-                    errorMsg += 'Unknown error occurred.';
-                }
-                
-                errorMsg += '\n\nCheck browser console (F12) for details.';
-                alert(errorMsg);
-                return null;
-            }
-        }
-    </script>
+  await boot(t);
+}
+
+// ── CONVERSATION ───────────────────────────────────────────────────
+function quickAct(text) {
+  if (busy) return;
+  addMsg('you', text);
+  hist.push({ role:'user', content: text });
+  mc++;
+  respond();
+}
+
+async function send() {
+  const el = document.getElementById('ci');
+  const t = el.value.trim();
+  if (!t || busy) return;
+  el.value = ''; el.style.height = 'auto';
+  addMsg('you', t);
+  hist.push({ role:'user', content: t });
+  mc++;
+  await respond();
+}
+
+async function respond() {
+  busy = true;
+  document.getElementById('sb').disabled = true;
+  setOrbState('THINKING');
+  setStatus('thinking','THINKING');
+  showTyping();
+
+  let msgs = [...hist];
+  if (mc > 0 && mc % 5 === 0) {
+    msgs = [...hist, {role:'user', content:'[INTERNAL: Good moment to land the big idea — one unforgettable plain-English sentence that captures everything we\'ve been exploring. Then ask where to go next.]'}];
+  }
+
+  try {
+    const res = await fetch(API_URL, {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        system: orbitSystem(),
+        messages: msgs
+      })
+    });
+    const data = await res.json();
+    let raw = data.content[0].text;
+    hideTyping();
+
+    const bm = raw.match(/^\[BEAT:(lens|deeper|clarity|insight|shift)\]/i);
+    const beat = bm ? bm[1].toLowerCase() : 'insight';
+    let txt = raw.replace(/^\[BEAT:[^\]]+\]\s*/i,'');
+
+    const im = txt.match(/IDEA:(.+)/i);
+    if (im) {
+      bigIdea = im[1].trim();
+      document.getElementById('pubBtn').classList.add('on');
+      txt = txt.replace(/IDEA:.+/i,'').trim();
+    }
+
+    txt = txt.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    addMsg('orbit-msg', txt, beat);
+    hist.push({ role:'assistant', content: raw });
+    if (mc >= 2) livePreview();
+
+  } catch(e) {
+    hideTyping();
+    addMsg('orbit-msg', 'Signal interrupted. Want to pick up where we were?', 'clarity');
+  }
+
+  busy = false;
+  document.getElementById('sb').disabled = false;
+  setOrbState('LIVE');
+  setStatus('live','LIVE');
+}
+
+// ── UI ─────────────────────────────────────────────────────────────
+function setStatus(type, label) {
+  const dot = document.getElementById('statusDot');
+  const txt = document.getElementById('statusText');
+  dot.className = `status-dot ${type}`;
+  txt.textContent = label;
+}
+
+function setOrbState(s) { document.getElementById('orbState').textContent = s; }
+
+const beatMap = {
+  lens:    {label:'🔭 New lens',      cls:'bt-lens'},
+  deeper:  {label:'🕳 Going deeper',  cls:'bt-deeper'},
+  clarity: {label:'💡 Plain English', cls:'bt-clarity'},
+  insight: {label:'⚡ Key insight',   cls:'bt-insight'},
+  shift:   {label:'🔄 Perspective shift', cls:'bt-shift'},
+};
+
+function addMsg(who, txt, beat) {
+  const c = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.className = `mg ${who}`;
+  if (who === 'you') {
+    d.innerHTML = `<div class="mg-who">You</div><div class="bub">${esc(txt)}</div>`;
+  } else {
+    const m = beatMap[beat] || beatMap.insight;
+    d.innerHTML = `
+      <div class="mg-who"><div class="who-orb" style="width:16px;height:16px;"></div>ORBIT</div>
+      <div class="bub">
+        <div class="beat-tag ${m.cls}">${m.label}</div>
+        ${txt}
+        <div class="inline-acts">
+          <div class="ia g" onclick="quickAct('Save that — give me a one-sentence version I\'ll remember.')">💡 Distil</div>
+          <div class="ia b" onclick="quickAct('Go deeper on that.')">🕳 Deeper</div>
+          <div class="ia w" onclick="quickAct('Simpler — one perfect analogy.')">👶 Simpler</div>
+          <div class="ia v" onclick="quickAct('Quiz me on this.')">🧩 Quiz</div>
+        </div>
+      </div>`;
+  }
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function showTyping(msg) {
+  const c = document.getElementById('msgs');
+  const d = document.createElement('div');
+  d.id = 'typi'; d.className = 'tg';
+  d.innerHTML = `
+    <div class="tg-who"><div class="who-orb" style="width:16px;height:16px;"></div>ORBIT</div>
+    <div class="tg-bub">
+      <div class="td"></div><div class="td"></div><div class="td"></div>
+      ${msg?`<span class="tg-label">${msg}</span>`:''}
+    </div>`;
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+function hideTyping() { const el = document.getElementById('typi'); if (el) el.remove(); }
+
+function togPt(el) {
+  const t = el.dataset.t;
+  if (pts.has(t)) { if (pts.size===1) return; pts.delete(t); el.classList.remove('on'); }
+  else { pts.add(t); el.classList.add('on'); }
+}
+function grow(el) { el.style.height='auto'; el.style.height=Math.min(el.scrollHeight,120)+'px'; }
+function onKey(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();} }
+
+// ── LIVE PREVIEW ────────────────────────────────────────────────────
+async function livePreview() {
+  const sb = document.getElementById('spBody');
+  sb.innerHTML = `<div style="padding:4px 0">${['58%','85%','48%','74%','62%'].map(w=>`<div class="shim" style="width:${w}"></div>`).join('')}</div>`;
+  const convo = hist.map(m=>`${m.role==='user'?'YOU':'ORBIT'}: ${m.content.slice(0,400)}`).join('\n\n');
+  try {
+    const res = await fetch(API_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000,
+        messages:[{role:'user',content:`Write a 130-word story PREVIEW from this conversation. Plain-English opening. Unexpected angle. Punchy ending. Zero unexplained jargon. Make someone stop scrolling in the first sentence.
+
+CONVERSATION:
+${convo}
+BIG IDEA: ${bigIdea||epMeta.summary}
+
+Write ONLY this HTML — no backticks, no markdown:
+<div class="hook">One arresting sentence that reframes everything.</div>
+<p class="drop">Opening paragraph. Plain. Surprising. Pulls them in.</p>
+<blockquote>The one uncomfortable truth at the heart of this.</blockquote>`}]})
+    });
+    const data = await res.json();
+    sb.innerHTML=`<div class="sc">${data.content[0].text}</div>`;
+    document.getElementById('spBadge').textContent=`${mc} TURNS`;
+    document.getElementById('spTabs').style.display='flex';
+  } catch(e) { sb.innerHTML='<div class="sp-nil"><div class="sp-nil-orb"></div>Preview forming…</div>'; }
+}
+
+// ── PUBLISH ─────────────────────────────────────────────────────────
+async function publishAll() {
+  const btn = document.getElementById('pubBtn');
+  if (!btn.classList.contains('on')) return;
+  btn.textContent = '\u29df Writing\u2026';
+  const convo = hist.map(m=>`${m.role==='user'?'YOU':'ORBIT'}: ${m.content.slice(0,400)}`).join('\n\n');
+  const targets = [...pts];
+  const instrs = {
+    blog:'"blog":"HTML blog post 400-500 words. h1 title, opening hook div, drop cap first paragraph, blockquote for key insight, punchy closing paragraph. Plain English. Zero unexplained jargon."',
+    post:'"post":"LinkedIn post 300 words plain text. Hook opening line. Surprising angle. Punchy close. Zero jargon."',
+    email:'"email":"Newsletter. SUBJECT line first. Short greeting. Three short sections. Sign-off."',
+    twitter:'"twitter":"X thread 5-6 tweets numbered 1/ etc. Hook first. One insight per tweet. Hashtags on last."',
+    instagram:'"instagram":"Caption: warm opener. 4 punchy sentences. Question at end. Blank line. 20 hashtags."'
+  };
+  const sel = targets.map(t=>instrs[t]).filter(Boolean).join(',\n');
+  try {
+    const res = await fetch(API_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:800,
+        messages:[{role:'user',content:'Write content for these formats based on this episode.\n\nEPISODE: '+epMeta.title+'\nINSIGHT: '+(bigIdea||epMeta.summary)+'\n\nReturn ONLY valid JSON object with keys: '+targets.join(', ')+'\n{'+sel+'}\nOnly JSON. No markdown. No backticks. Escape all inner quotes.'}]})
+    });
+    const data = await res.json();
+    if (res.status === 429 || data.error?.type === 'rate_limit_error') {
+      btn.textContent = '\u2736 Publish';
+      alert('Rate limit — wait 30 seconds and try again.');
+      return;
+    }
+    if (!data.content?.[0]?.text) throw new Error('Empty response');
+    let raw = data.content[0].text.replace(/```json|```/g,'').trim();
+    const s=raw.indexOf('{'), e=raw.lastIndexOf('}');
+    if(s!==-1&&e!==-1) raw=raw.substring(s,e+1);
+    try {
+      pub = JSON.parse(raw);
+    } catch(pe) {
+      pub = {};
+      targets.forEach(k => {
+        const m = raw.match(new RegExp('"'+k+'"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"','s'));
+        if(m) pub[k] = m[1].replace(/\\n/g,'\n').replace(/\\"/g,'"');
+      });
+      if(!Object.keys(pub).length) throw new Error('Parse failed — please try again');
+    }
+    renderPub();
+    btn.textContent = '\u2736 Published!';
+    setTimeout(()=>{ btn.textContent='\u2736 Publish'; },3000);
+  } catch(err) { btn.textContent='\u2736 Publish'; alert('Publishing failed: '+err.message); }
+
+function renderPub() {
+  document.getElementById('spTabs').style.display='flex';
+  document.getElementById('spBadge').textContent='PUBLISHED';
+  document.getElementById('spBody').innerHTML=`<div class="sc">${pub.blog||''}</div><button class="cpb" onclick="cp('blog')">⎘ Copy</button>`;
+}
+
+function swTab(el) {
+  document.querySelectorAll('.spt').forEach(t=>t.classList.remove('on')); el.classList.add('on');
+  const t=el.dataset.t; const sb=document.getElementById('spBody');
+  if(t==='blog'){ sb.innerHTML=`<div class="sc">${pub.blog||''}</div><button class="cpb" onclick="cp('blog')">⎘ Copy</button>`; return; }
+  const labels={post:'Long Post',email:'Email',twitter:'𝕏 Thread',instagram:'Instagram'};
+  sb.innerHTML=`<div style="margin-bottom:9px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase">${labels[t]||t}</div><div class="ch-con">${esc(pub[t]||'Hit Publish first.')}</div><button class="cpb" onclick="cp('${t}')">⎘ Copy</button>`;
+}
+
+function cp(t) {
+  const text = t==='blog'?(pub.blog||'').replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim():(pub[t]||'');
+  navigator.clipboard.writeText(text);
+  document.querySelectorAll('.cpb').forEach(b=>{b.textContent='✓ Copied';b.classList.add('done');});
+  setTimeout(()=>{document.querySelectorAll('.cpb').forEach(b=>{b.textContent='⎘ Copy';b.classList.remove('done');});},2000);
+}
+
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+</script>
 </body>
 </html>
