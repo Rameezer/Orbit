@@ -895,7 +895,7 @@ IDEA:one memorable sentence`;
 }
 
 // ── BOOT — ORBIT starts itself ─────────────────────────────────────
-window.addEventListener('load', () => setTimeout(boot, 800));
+window.addEventListener('load', () => setTimeout(boot, 2000));
 
 async function boot(topic) {
   setStatus('thinking', 'SCANNING');
@@ -953,7 +953,6 @@ async function boot(topic) {
     setStatus('live', 'LIVE');
     setOrbState('LIVE');
     document.getElementById('sb').disabled = false;
-    livePreview();
 
   } catch(err) {
     clearInterval(tick);
