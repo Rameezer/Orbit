@@ -1274,7 +1274,8 @@ ONLY JSON. No markdown.`}]})
     let raw = data.content[0].text.replace(/```json|```/g,'').trim();
     const s=raw.indexOf('{'),e=raw.lastIndexOf('}');
     if(s!==-1&&e!==-1) raw=raw.substring(s,e+1);
-    pub = JSON.parse(raw);
+    raw = raw.replace(/\n/g,' ').replace(/[\u0000-\u001F]+/g,' ');
+pub = JSON.parse(raw);
     renderPub();
     btn.textContent = '✦ Published!';
     setTimeout(()=>{ btn.textContent='✦ Publish'; },3000);
