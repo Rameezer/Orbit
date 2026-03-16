@@ -1,0 +1,9 @@
+{
+  "name": "orbit-intelligence",
+  "version": "1.0.0",
+  "description": "ORBIT — Ambient Intelligence Companion",
+  "private": true,
+  "engines": {
+    "node": "18.x"
+  }
+}
