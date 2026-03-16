@@ -1274,12 +1274,20 @@ ONLY JSON. No markdown.`}]})
     const s=raw.indexOf('{'),e=raw.lastIndexOf('}');
     if(s!==-1&&e!==-1) raw=raw.substring(s,e+1);
     raw = raw.replace(/\n/g,' ').replace(/[\u0000-\u001F]+/g,' ');
-pub = JSON.parse(raw);
+    try {
+      pub = JSON.parse(raw);
+    } catch(e) {
+      pub = {};
+      ['blog','post','email','twitter','instagram'].forEach(k => {
+        const m = raw.match(new RegExp('"'+k+'"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"','s'));
+        if(m) pub[k] = m[1].replace(/\\n/g,'\n').replace(/\\"/g,'"');
+      });
+      if(!Object.keys(pub).length) throw new Error('Could not parse response - try again');
+    }
     renderPub();
     btn.textContent = '✦ Published!';
     setTimeout(()=>{ btn.textContent='✦ Publish'; },3000);
   } catch(err) { btn.textContent='✦ Publish'; alert('Publishing failed: '+err.message); }
-}
 
 function renderPub() {
   document.getElementById('spTabs').style.display='flex';
